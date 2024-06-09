@@ -1,0 +1,32 @@
+apiVersion: v1
+data:
+  Corefile: |
+    .:53 {
+        errors
+        health {
+            lameduck 5s
+        }
+        ready
+        kubernetes cluster.local in-addr.arpa ip6.arpa {
+            pods insecure
+            fallthrough in-addr.arpa ip6.arpa
+        }
+        prometheus :9153
+        forward . 192.168.33.10
+        cache 30
+        loop
+        reload
+        loadbalance
+    }
+  clusterDNS: 10.43.0.10
+  clusterDomain: cluster.local
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"Corefile":".:53 {\n    errors\n    health {\n        lameduck 5s\n    }\n    ready\n    kubernetes cluster.local in-addr.arpa ip6.arpa {\n        pods insecure\n        fallthrough in-addr.arpa ip6.arpa\n    }\n    prometheus :9153\n    forward . 192.168.33.10\n    cache 30\n    loop\n    reload\n    loadbalance\n}\n","clusterDNS":"10.43.0.10","clusterDomain":"cluster.local"},"kind":"ConfigMap","metadata":{"annotations":{},"creationTimestamp":"2024-06-03T09:10:11Z","name":"cluster-dns","namespace":"kube-system","resourceVersion":"304","uid":"bc1690f7-6d36-4a61-bc34-6855fe4db2f1"}}
+  creationTimestamp: "2024-06-03T09:10:11Z"
+  name: cluster-dns
+  namespace: kube-system
+  resourceVersion: "308656"
+  uid: bc1690f7-6d36-4a61-bc34-6855fe4db2f1

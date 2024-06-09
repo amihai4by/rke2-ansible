@@ -1,0 +1,4 @@
+
+---
+- name: Deploy Rancher
+  shell: kubectl apply -f /root/rancher.yaml

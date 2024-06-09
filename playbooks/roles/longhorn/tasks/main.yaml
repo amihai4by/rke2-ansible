@@ -1,0 +1,4 @@
+
+---
+- name: Deploy Longhorn
+  shell: kubectl apply -f /root/longhorn.yaml

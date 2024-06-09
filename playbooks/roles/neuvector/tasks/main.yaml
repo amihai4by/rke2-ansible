@@ -1,0 +1,4 @@
+
+---
+- name: Deploy NeuVector
+  shell: kubectl apply -f /root/neuvector.yaml
