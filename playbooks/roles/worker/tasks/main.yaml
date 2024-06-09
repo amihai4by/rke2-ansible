@@ -1,0 +1,12 @@
+
+---
+- name: Create RKE2 worker config
+  template:
+    src: rke2_worker_config.yaml.j2
+    dest: /etc/rancher/rke2/config.yaml
+
+- name: Start and enable RKE2 agent
+  systemd:
+    name: rke2-agent
+    state: started
+    enabled: yes

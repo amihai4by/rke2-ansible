@@ -1,0 +1,17 @@
+
+---
+- name: Install RKE2 on all nodes
+  hosts: all
+  roles:
+    - common
+
+- name: Install and configure RKE2 master nodes
+  hosts: masters
+  roles:
+    - master
+    - keepalived
+
+- name: Install and configure RKE2 worker nodes
+  hosts: workers
+  roles:
+    - worker

@@ -1,0 +1,7 @@
+
+private-registry:
+  mirrors:
+    "docker.io":
+      endpoint:
+        - "http://{{ private_registry }}"
+resolv-conf: /etc/rancher/rke2/resolv.conf

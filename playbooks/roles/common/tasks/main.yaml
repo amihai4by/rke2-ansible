@@ -1,0 +1,47 @@
+
+---
+- name: Ensure required directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "/etc/rancher/rke2"
+    - "/etc/docker"
+
+- name: Configure Docker daemon
+  template:
+    src: docker_daemon.json.j2
+    dest: /etc/docker/daemon.json
+  notify:
+    - Restart Docker
+
+- name: Install Docker
+  apt:
+    name: docker.io
+    state: present
+
+- name: Download RKE2 artifacts
+  get_url:
+    url: "http://repo.hpc.local/rke2-artifacts/{{ item }}"
+    dest: "/root/rke2-artifacts/{{ item }}"
+  with_items:
+    - install.sh
+    - rke2.linux-amd64.tar.gz
+    - rke2-images.linux-amd64.tar.zst
+
+- name: Install RKE2
+  shell: INSTALL_RKE2_ARTIFACT_PATH=/root/rke2-artifacts sh /root/rke2-artifacts/install.sh
+  args:
+    creates: /usr/local/bin/rke2
+
+- name: Ensure systemd is reloaded
+  systemd:
+    daemon_reload: yes
+
+- name: Ensure Docker is running
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+  notify:
+    - Restart Docker
