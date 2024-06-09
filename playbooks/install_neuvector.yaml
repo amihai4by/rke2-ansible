@@ -1,0 +1,6 @@
+
+---
+- name: Install NeuVector on the Kubernetes cluster
+  hosts: masters
+  roles:
+    - neuvector

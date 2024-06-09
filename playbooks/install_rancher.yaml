@@ -1,0 +1,6 @@
+
+---
+- name: Install Rancher on the Kubernetes cluster
+  hosts: masters
+  roles:
+    - rancher

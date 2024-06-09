@@ -1,0 +1,6 @@
+
+---
+- name: Install Longhorn on the Kubernetes cluster
+  hosts: masters
+  roles:
+    - longhorn

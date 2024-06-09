@@ -166,3 +166,124 @@ sudo systemctl restart rke2-agent
 ## License
 
 This project is licensed under the MIT License.
+
+YOUR_CLUSTER_TOKEN` in the `inventory/hosts.ini` file with the actual token from your RKE2 master node.
+
+### Step 2: Run the Playbooks
+
+Run the Ansible playbook to set up the cluster:
+
+```bash
+ansible-playbook playbooks/install_rke2.yaml
+```
+
+Run the Ansible playbooks to install additional components:
+
+```bash
+ansible-playbook playbooks/install_neuvector.yaml
+ansible-playbook playbooks/install_longhorn.yaml
+ansible-playbook playbooks/install_rancher.yaml
+```
+
+### Keepalived Configuration
+
+The `keepalived.conf.j2` template includes a basic configuration for Keepalived. Update the `auth_pass` and `virtual_ipaddress` values as needed.
+
+```conf
+vrrp_instance VI_1 {
+    state MASTER
+    interface eth0
+    virtual_router_id 51
+    priority 101
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass your_password
+    }
+    virtual_ipaddress {
+        192.168.66.20
+    }
+}
+```
+
+### Network Configuration
+
+The `docker_daemon.json.j2` template configures Docker to use the local registry.
+
+```json
+{
+  "insecure-registries" : ["{{ private_registry }}"]
+}
+```
+
+### RKE2 Configuration
+
+The `rke2_master_config.yaml.j2` and `rke2_worker_config.yaml.j2` templates set up the RKE2 configurations for masters and workers, respectively.
+
+#### Master Configuration
+
+```yaml
+private-registry:
+  mirrors:
+    "docker.io":
+      endpoint:
+        - "http://{{ private_registry }}"
+resolv-conf: /etc/rancher/rke2/resolv.conf
+```
+
+#### Worker Configuration
+
+```yaml
+token: "{{ rke2_token }}"
+server: "{{ rke2_server_url }}"
+private-registry:
+  mirrors:
+    "docker.io":
+      endpoint:
+        - "http://{{ private_registry }}"
+resolv-conf: /etc/rancher/rke2/resolv.conf
+```
+
+### NeuVector Configuration
+
+The `neuvector.yaml.j2` template includes the configuration for deploying NeuVector.
+
+### Longhorn Configuration
+
+The `longhorn.yaml.j2` template includes the configuration for deploying Longhorn.
+
+### Rancher Configuration
+
+The `rancher.yaml.j2` template includes the configuration for deploying Rancher.
+
+## Troubleshooting
+
+If you encounter issues, check the logs in `/var/log/rke2-setup.log` on each node.
+
+### Checking Services
+
+For masters:
+
+```bash
+systemctl status rke2-server
+```
+
+For workers:
+
+```bash
+systemctl status rke2-agent
+```
+
+### Reload Systemd and Restart Services
+
+If you make changes to the systemd service files, reload systemd and restart the services:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart rke2-server
+sudo systemctl restart rke2-agent
+```
+
+## License
+
+This project is licensed under the MIT License.
