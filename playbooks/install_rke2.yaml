@@ -4,14 +4,15 @@
   hosts: all
   roles:
     - common
-
+  become: true
 - name: Install and configure RKE2 master nodes
   hosts: masters
   roles:
     - master
     - keepalived
-
+  become: true
 - name: Install and configure RKE2 worker nodes
   hosts: workers
   roles:
     - worker
+  become: true
